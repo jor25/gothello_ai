@@ -10,7 +10,8 @@ import gthclient
 me = sys.argv[1]
 opp = gthclient.opponent(me)
 
-client = gthclient.GthClient(me, "localhost", 0)
+#client = gthclient.GthClient(me, "localhost", 0)
+client = gthclient.GthClient(me, "barton.cs.pdx.edu", 0)
 
 def letter_range(letter):
     for i in range(5):
