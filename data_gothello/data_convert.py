@@ -18,16 +18,22 @@ import re
 import numpy as np
 import os
 
+STATUS = False
 
 def write_data(data, file_name="state_data/data"):
     np.savetxt("{}.csv".format(file_name), data, delimiter=",", fmt='%i')
-    print("DATA SAVED.")
+    
+    if STATUS:
+        print("DATA SAVED.")
     pass
+
 
 def append_data(data, file_name="state_data/data"):
     with open("{}.csv".format(file_name),'ab') as f:
         np.savetxt(f, data, delimiter=",", fmt='%i')
-    print("DATA APPENDED.")
+    
+    if STATUS:
+        print("DATA APPENDED.")
 
 
 def convert_labels(labels):
@@ -46,7 +52,10 @@ def convert_labels(labels):
             temp_labels.append(lab)
     #print(temp_labels)
     conv_labels = np.asarray(temp_labels)
-    print(conv_labels)
+    
+    if STATUS:
+        print(conv_labels)
+    
     return conv_labels  # Give back numpy array
     
 
@@ -54,26 +63,33 @@ def convert_labels(labels):
 # Give back the char for winner and loser
 def who_won(path="gothello-runs-depth3/2-20205"):
     file_path = "{}/gthd".format(path)
-    print("IT WORKED {}".format(file_path))
+    
+    if STATUS:
+        print("IT WORKED {}".format(file_path))
 
     #with open("gothello-runs-depth3/2-20205/gthd") as f:
     with open(file_path) as f:
         gthd_data = f.readlines()   # Read in the text file
         win_line = gthd_data[-1]    # Get the last line
-        print(win_line)
+        
+        if STATUS:
+            print(win_line)
         
         if "White" in win_line:
-            print("white")
+            if STATUS:
+                print("white")
             win = 'w'
             loss = 'b'
 
         elif "Black" in win_line:
-            print("black")
+            if STATUS:
+                print("black")
             win = 'b'
             loss = 'w'
 
         else:
-            print("ERROR")
+            if STATUS:
+                print(win_line)
 
     return win, loss
 
@@ -84,7 +100,9 @@ def assign_data(ndata, winner='w', loser='b'):
     ndata[ndata == loser] = 1   # Loser will be 1
     ndata[ndata == '.'] = 0     # Blank will be 0
     ndata2 = ndata.astype(int)
-    print(ndata2)
+    
+    if STATUS:
+        print(ndata2)
     return ndata2
 
 
@@ -125,7 +143,8 @@ def get_log_data(win, loss, path="gothello-runs-depth3/2-20205"):
         x2 = [list(xs) for xs in x]
         
         ndata = np.asarray(x2)
-        print(ndata)
+        if STATUS:
+            print(ndata)
      
         '''
         ndata[ndata == 'w'] = 2   # Winner will be 2
@@ -167,7 +186,9 @@ def get_out_data(win, path="gothello-runs-depth3/2-20205"):
         #print(labels)
 
         nlabels = np.asarray(labels)
-        print(nlabels)
+        
+        if STATUS:
+            print(nlabels)
 
         conv_labels = convert_labels(nlabels)
         return conv_labels
@@ -177,27 +198,44 @@ def get_out_data(win, path="gothello-runs-depth3/2-20205"):
 if __name__== "__main__" :
     # Testing this out
     #'''
+    count = 0   # Collect data in incremental files
+    increments = 0
+
     for (root,dirs,files) in os.walk("gothello-runs-depth3", topdown=True): 
         try:
+            count += 1   # Keep track of how many files I've been through
+            if count % 25000 == 0: # New file every 25,000 files 
+                increments += 1     # Go to a new file
+
+            str_datafile = "state_data/data_{}".format(increments)
+            str_labelfile = "state_data/labels_{}".format(increments)
+
             win, loss = who_won(root)
-            print (root) 
-            #print (dirs) 
-            #print (files) 
-            print(win)
-            print(loss)
+            
+            if STATUS:
+                print (root) 
+                #print (dirs) 
+                #print (files) 
+                print(win)
+                print(loss)
 
             state_data = get_log_data(win, loss, root)
             state_labels = get_out_data(win, root)
-            append_data(state_data)
-            append_data(state_labels, "state_data/labels")
-            print("wrote to files!")
-            print ("--------------------------------")
+            append_data(state_data, str_datafile)
+            append_data(state_labels, str_labelfile)
+
+            if count % 25000 == 0: # New file every 25,000 files 
+                print("************************************************************************")
+                print("FILES SAVED TO: {}\t{}".format(str_datafile, str_labelfile))
+                print("************************************************************************")
         
         except (KeyboardInterrupt, SystemExit):
             raise
 
         except:
-            print("Something went wrong here: {}".format(root))
+            if STATUS:
+                print("Something went wrong here: {}".format(root))
+            
     #'''
     
     '''
