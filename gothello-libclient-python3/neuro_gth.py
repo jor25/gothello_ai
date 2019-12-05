@@ -4,7 +4,6 @@
 # Need to build data pipeline for training as well.
 
 import numpy as np
-#import pandas as pd
 from operator import add
 from keras.optimizers import Adam
 from keras.models import Sequential
@@ -12,7 +11,9 @@ from keras.layers.core import Dense, Dropout
 import random
 import sys
 import gthclient
+import model_arch as ma
 
+'''
 class Collection():
     def __init__(self):
         self.learning_rate = 0.001
@@ -22,11 +23,11 @@ class Collection():
 
     def network(self, weights=None):
         model = Sequential()
-        model.add(Dense(output_dim=40, activation='relu', input_dim=25))        # max 144
+        model.add(Dense(output_dim=75, activation='relu', input_dim=25))        # max 144
         model.add(Dropout(0.15))
-        model.add(Dense(output_dim=40, activation='relu'))
+        model.add(Dense(output_dim=75, activation='relu'))
         model.add(Dropout(0.15))
-        model.add(Dense(output_dim=40, activation='relu'))
+        model.add(Dense(output_dim=75, activation='relu'))
         model.add(Dropout(0.15))
 
         model.add(Dense(output_dim=25, activation='softmax'))
@@ -37,7 +38,7 @@ class Collection():
             model.load_weights(weights)
             print("model loaded")
         return model
-
+'''
 
 
 def letter_range(letter):
@@ -140,7 +141,7 @@ def calc_score(npstate):
         print("DRAW")
 
 
-nn = Collection()
+nn = ma.Collection()
 me = sys.argv[1]
 opp = gthclient.opponent(me)
 
