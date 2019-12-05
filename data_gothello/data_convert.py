@@ -16,6 +16,7 @@
 
 import re
 import numpy as np
+import os
 
 
 def write_data(data, file_name="state_data/data"):
@@ -43,63 +44,127 @@ def convert_labels(labels):
             lab = moves.index(lab)
             #print(lab)
             temp_labels.append(lab)
-    print(temp_labels)
+    #print(temp_labels)
     conv_labels = np.asarray(temp_labels)
     print(conv_labels)
     return conv_labels  # Give back numpy array
     
 
+# Open gthd and look at who won the game example.
+# Give back the char for winner and loser
+def who_won(path="gothello-runs-depth3/2-20205"):
+    file_path = "{}/gthd".format(path)
+    print("IT WORKED {}".format(file_path))
+
+    #with open("gothello-runs-depth3/2-20205/gthd") as f:
+    with open(file_path) as f:
+        gthd_data = f.readlines()   # Read in the text file
+        win_line = gthd_data[-1]    # Get the last line
+        print(win_line)
+        
+        if "White" in win_line:
+            print("white")
+            win = 'w'
+            loss = 'b'
+
+        elif "Black" in win_line:
+            print("black")
+            win = 'b'
+            loss = 'w'
+
+        else:
+            print("ERROR")
+
+    return win, loss
+
+
+# Take the best player
+def assign_data(ndata, winner='w', loser='b'):
+    ndata[ndata == winner] = 2  # Winner will be 2
+    ndata[ndata == loser] = 1   # Loser will be 1
+    ndata[ndata == '.'] = 0     # Blank will be 0
+    ndata2 = ndata.astype(int)
+    print(ndata2)
+    return ndata2
+
+
+# Choose black or white files
+def choose_file(win):
+    if win == 'w':
+        name = "white"
+    else:
+        name = "black"
+    
+    return name
+
+
 # Get the data for winning log
-def get_log_data():
-    with open("gothello-runs-depth3/2-20205/white-log") as f:
+def get_log_data(win, loss, path="gothello-runs-depth3/2-20205"):
+    #file_name = "gothello-runs-depth3/2-20205/{}-log".format(choose_file(win))
+    file_name = "{}/{}-log".format(path, choose_file(win))
+
+    #with open("gothello-runs-depth3/2-20205/white-log") as f:
+    with open(file_name) as f:
         data_text = f.readlines()   # Read in the text file
         data_text.pop(0)            # Remove the "logging"
-        print(data_text)
+        #print(data_text)
         merged_data = ''.join(data_text)        # Put into one big string
         temp = merged_data.replace('\n','')     # Remove newlines
-        x = re.split("\d+", temp)               # Split based on set of numbers
+        x = re.split("\d+|-\d+", temp)          # Split based on set of numbers, also remove neg sign
         x.pop(-1)                               # Remove the last element ''
-        print(x)
+        #print(x)
 
         # Verify correct lengths
+        '''
         print(len(x))
         for tf in x:
             print(len(tf))
-
+        '''
+        
+        # Convert strings to lists
         x2 = [list(xs) for xs in x]
         
         ndata = np.asarray(x2)
         print(ndata)
-      
+     
+        '''
         ndata[ndata == 'w'] = 2   # Winner will be 2
         ndata[ndata == 'b'] = 1   # Loser will be 1
         ndata[ndata == '.'] = 0   # Blank will be 0
         ndata2 = ndata.astype(int)
         print(ndata2)
         return ndata2
+        '''
+        # Dynamically call a winner and loser - train on winner
+        return assign_data(ndata, win, loss)
+
 
 
 
 
 # Get the data from winning output
-def get_out_data():
-    with open("gothello-runs-depth3/2-20205/white-output") as f2:
+def get_out_data(win, path="gothello-runs-depth3/2-20205"):
+    #file_name = "gothello-runs-depth3/2-20205/{}-output".format(choose_file(win))
+    file_name = "{}/{}-output".format(path, choose_file(win))
+
+    #with open("gothello-runs-depth3/2-20205/white-output") as f2:
+    with open(file_name) as f2:
         labels = []
         out_data = f2.readlines()   # Read in the text file
         winner = out_data[-1]
-        print(winner)
+        #print(winner)
 
         out_data.pop(-1)
-        print(out_data)
+        #print(out_data)
 
         for output in out_data:
             if "me:" in output:
                 lab = output.replace('\n','')
-                print(lab)
+                #print(lab)
                 labels.append(lab[-2:])
         
         labels.pop(-1)
-        print(labels)
+        #print(labels)
 
         nlabels = np.asarray(labels)
         print(nlabels)
@@ -110,8 +175,39 @@ def get_out_data():
 
 # Call Main and do the good stuff
 if __name__== "__main__" :
-    state_data = get_log_data()
-    state_labels = get_out_data()
-    append_data(state_data)
-    append_data(state_labels, "state_data/labels")
+    # Testing this out
+    #'''
+    for (root,dirs,files) in os.walk("gothello-runs-depth3", topdown=True): 
+        try:
+            win, loss = who_won(root)
+            print (root) 
+            #print (dirs) 
+            #print (files) 
+            print(win)
+            print(loss)
+
+            state_data = get_log_data(win, loss, root)
+            state_labels = get_out_data(win, root)
+            append_data(state_data)
+            append_data(state_labels, "state_data/labels")
+            print("wrote to files!")
+            print ("--------------------------------")
+        
+        except (KeyboardInterrupt, SystemExit):
+            raise
+
+        except:
+            print("Something went wrong here: {}".format(root))
+    #'''
+    
+    '''
+    win, loss = who_won("gothello-runs-depth3/2-20207")
+    state_data = get_log_data(win, loss, "gothello-runs-depth3/2-20207")
+    state_labels = get_out_data(win, "gothello-runs-depth3/2-20207")
+    write_data(state_data)
+    write_data(state_labels, "state_data/labels")
     print("wrote to files!")
+    '''
+
+
+
