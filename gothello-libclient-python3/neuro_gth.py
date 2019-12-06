@@ -13,32 +13,7 @@ import sys
 import gthclient
 import model_arch as ma
 
-'''
-class Collection():
-    def __init__(self):
-        self.learning_rate = 0.001
-        self.model = self.network()
-        #self.model = self.network("model_files/nn_01.hdf5")
-
-
-    def network(self, weights=None):
-        model = Sequential()
-        model.add(Dense(output_dim=75, activation='relu', input_dim=25))        # max 144
-        model.add(Dropout(0.15))
-        model.add(Dense(output_dim=75, activation='relu'))
-        model.add(Dropout(0.15))
-        model.add(Dense(output_dim=75, activation='relu'))
-        model.add(Dropout(0.15))
-
-        model.add(Dense(output_dim=25, activation='softmax'))
-        opt = Adam(self.learning_rate)
-        model.compile(loss='mse', metrics=['accuracy'], optimizer=opt)
-
-        if weights:
-            model.load_weights(weights)
-            print("model loaded")
-        return model
-'''
+VIEW = False    # Switch this if we don't want to see game details
 
 
 def letter_range(letter):
@@ -48,24 +23,34 @@ def letter_range(letter):
 
 def show_position():
     state = []  # Making a new state
+    scoring_state = [] # Custom for counting
     for digit in letter_range('1'):
         for letter in letter_range('a'):
             pos = letter + digit
             if pos in grid["white"]:
                 piece = '1'#"O"
+                state.append(0)     # The enemy is the loser
                 state.append(1)     # The enemy is the loser
+                scoring_state.append(1)
             elif pos in grid["black"]:
                 piece = '2'#"*"
-                state.append(2)     # You gonna be the winner
+                state.append(1)     # You gonna be the winner
+                state.append(0)     # You gonna be the winner
+                scoring_state.append(2)
             else:
                 piece = '0'#"."
                 state.append(0)     # These are blanks
-            print(piece, end="")
-        #print("HELLO")
-        print()
+                state.append(0)     # These are blanks
+                scoring_state.append(0)
+            
+            if VIEW:
+                print(piece, end="")
+        if VIEW:
+            print()
     
-    print(state)
-    return np.asarray(state)        # Give back flattened array of data
+    if VIEW:
+        print(state)
+    return np.asarray(state), np.asarray(scoring_state)        # Give back 2 flattened array of data
 
 def give_state(move):
     # 0 = '.'   - Blank
@@ -126,27 +111,76 @@ def make_predict(restate):
 def calc_score(npstate):
     my_tiles = np.where(npstate == 2)[0]    # Where I(BLACK) placed my tiles
     opp_tiles = np.where(npstate == 1)[0]   # Where white placed their tiles
-    print("my_tiles: {}\nopp_tiles: {}".format(my_tiles, opp_tiles))
+    if VIEW:
+        print("my_tiles: {}\nopp_tiles: {}".format(my_tiles, opp_tiles))
     #print(my_tiles[0])
 
     my_score = len(my_tiles)
     opp_score = len(opp_tiles)
-    print("my_score: {}\nopp_score: {}".format(my_score, opp_score))
+    if VIEW:
+        print("my_score: {}\nopp_score: {}".format(my_score, opp_score))
 
     if my_score > opp_score:
         print("BLACK WINS")
+        return 1    # add 1 for every win
     elif my_score < opp_score:
         print("WHITE WINS")
+        return 0
     else:
         print("DRAW")
+        return 0
+
+def play_game(side):
+    while True:
+        npstate, score_state = show_position()
+        restate = np.reshape(npstate, (-1,50))
+        if VIEW:
+            print()
+        if side == me:
+            #move = random.choice(list(board))   # Using random
+            move = make_predict(restate)       # Using Neuronet
+
+            if VIEW:
+                print("me:", move)
+            try:
+                client.make_move(move)
+                grid[me].add(move)
+                board.remove(move)
+            except gthclient.MoveError as e:
+                if e.cause == e.ILLEGAL:
+                    if VIEW:
+                        print("me: made illegal move, passing")
+                    client.make_move("pass")
+        else:
+            cont, move = client.get_move()
+            if VIEW:
+                print("opp:", move)
+            if cont and move == "pass":
+                if VIEW:
+                    print("me: pass to end game")
+                client.make_move("pass")
+                break
+            else:
+                if not cont:
+                    break
+                board.remove(move)
+                grid[opp].add(move)
+
+        side = gthclient.opponent(side)
+
+    # Get the score for winner here:
+    return calc_score(score_state)#npstate)
+
+
 
 
 nn = ma.Collection()
 me = sys.argv[1]
-opp = gthclient.opponent(me)
+#opp = gthclient.opponent(me)
 
 #client = gthclient.GthClient(me, "localhost", 0)
-client = gthclient.GthClient(me, "barton.cs.pdx.edu", 0)
+#client = gthclient.GthClient(me, "barton.cs.pdx.edu", 0)
+'''
 side = "black"
 
 board = {letter + digit
@@ -154,9 +188,42 @@ board = {letter + digit
          for digit in letter_range('1')}
 
 grid = {"white": set(), "black": set()}
+'''
 
 if __name__ == "__main__":
-    print(board)
+
+    wins = 0
+    total_games = 100    # play 10 games and see how I do
+    i = 0
+    while i < total_games: 
+        i += 1
+        try:
+            opp = gthclient.opponent(me)
+            client = gthclient.GthClient(me, "barton.cs.pdx.edu", 0)
+
+            side = "black"
+
+            board = {letter + digit
+                     for letter in letter_range('a')
+                     for digit in letter_range('1')}
+
+            grid = {"white": set(), "black": set()}
+
+            wins += play_game(side)
+            client.closeall()
+            print("{}.\t{}/{}".format(i, wins, total_games))
+            
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        
+        except:
+            print("ERROR on {}".format(i))
+            i = i-1
+            pass
+
+
+    #print(board)
+    '''
     while True:
         npstate = show_position()
         restate = np.reshape(npstate, (-1,25))
@@ -191,6 +258,7 @@ if __name__ == "__main__":
 
     # Get the score for winner here:
     calc_score(npstate)
+    '''
 
 '''
 if __name__ == "__main__":
