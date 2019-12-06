@@ -52,28 +52,6 @@ def show_position():
         print(state)
     return np.asarray(state), np.asarray(scoring_state)        # Give back 2 flattened array of data
 
-def give_state(move):
-    # 0 = '.'   - Blank
-    # 2 = '*'   - Winner
-    # 1 = '0'   - Loser
-    # Move = a4
-    board_2d = np.zeros((5,5), dtype=int) 
-
-    if move[0] == 'a':
-        x = 0
-    elif move[0] == 'b':
-        x = 1
-    elif move[0] == 'c':
-        x = 2
-    elif move[0] == 'd':
-        x = 3
-    elif move[0] == 'e':
-        x = 4
-    
-    y = int(move[1]) - 1
-
-    print("{y},{x}")
-
 
 def make_predict(restate):
 
