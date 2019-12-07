@@ -13,7 +13,7 @@ import sys
 import gthclient
 import model_arch as ma
 
-VIEW = False    # Switch this if we don't want to see game details
+VIEW = True    # Switch this if we don't want to see game details
 
 # Bart function for piece generation
 def letter_range(letter):
@@ -57,6 +57,7 @@ def show_position():
     
     if VIEW:
         print(state)
+        print(scoring_state)
     return np.asarray(state), np.asarray(scoring_state)        # Give back 2 flattened array of data
 
 
@@ -70,12 +71,20 @@ def make_predict(restate):
     return: string - my_move 
     """
 
+    moves = ['a1','b1','c1','d1','e1',
+            'a2','b2','c2','d2','e2',
+            'a4','b4','c4','d4','e4',
+            'a3','b3','c3','d3','e3',
+            'a4','b4','c4','d4','e4',
+            'a5','b5','c5','d5','e5']
+    
+    '''
     moves = ['a5','b5','c5','d5','e5',
             'a4','b4','c4','d4','e4',
             'a3','b3','c3','d3','e3',
             'a2','b2','c2','d2','e2',
             'a1','b1','c1','d1','e1']
-
+    '''
     prediction = nn.model.predict(restate)
     my_move = moves[np.argmax(prediction[0])]   # a5
     #print("prediction:\n{}\nmove: {}".format(prediction, my_move))
@@ -201,7 +210,7 @@ grid = {"white": set(), "black": set()}
 if __name__ == "__main__":
 
     wins = 0
-    total_games = 100    # play 10 games and see how I do
+    total_games = 1    # play 10 games and see how I do
     i = 0
     while i < total_games: 
         i += 1
