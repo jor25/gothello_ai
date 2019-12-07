@@ -145,105 +145,107 @@ def calc_score(npstate):
 # Building off Bart's code
 def play_game(side):
     """
-    Play the game and make moves against an opponent
+    Given a side, black or white, play the game and make moves against an opponent
     based on states collected.
     """
     while True:
-        npstate, score_state = show_position()
-        restate = np.reshape(npstate, (-1,50))
+        npstate, score_state = show_position()      # Collect game states and scoring state
+        restate = np.reshape(npstate, (-1,50))      # Convert game state to the right size
         if VIEW:
             print()
         if side == me:
-            #move = random.choice(list(board))   # Using random
-            move = make_predict(restate)       # Using Neuronet
+            """ SELECT AI PLAYER HERE: """
+            #move = random.choice(list(board))      # Using random  - set a flag to choose player later...
+            move = make_predict(restate)            # Using Neuronet
 
             if VIEW:
-                print("me:", move)
+                print("me:", move)                                  # Print my move
             try:
-                client.make_move(move)
-                grid[me].add(move)
-                board.remove(move)
+                client.make_move(move)                              # Then attempt to place the pieces
+                grid[me].add(move)                                  # Place on the grid
+                board.remove(move)                                  # Remove from board of available spots
             except gthclient.MoveError as e:
                 if e.cause == e.ILLEGAL:
                     if VIEW:
-                        print("me: made illegal move, passing")
-                    client.make_move("pass")
+                        print("me: made illegal move, passing")     # Made an illegal move
+                    client.make_move("pass")                        # No move made - so pass
         else:
-            cont, move = client.get_move()
+            cont, move = client.get_move()              # If it's opponent's turn - get their move
             if VIEW:
                 print("opp:", move)
             if cont and move == "pass":
                 if VIEW:
                     print("me: pass to end game")
-                client.make_move("pass")
+                client.make_move("pass")                # Game end condition
                 break
             else:
                 if not cont:
-                    break
-                board.remove(move)
-                grid[opp].add(move)
+                    break                               # Game end condition
+                board.remove(move)                      # Remove available board move
+                grid[opp].add(move)                     # Place on grid
 
-        side = gthclient.opponent(side)
+        side = gthclient.opponent(side)                 # Who's side is it?
 
     # Get the score for winner here:
-    return calc_score(score_state)#npstate)
+    return calc_score(score_state)
 
 
 
 
-nn = ma.Collection()
-me = sys.argv[1]
-#opp = gthclient.opponent(me)
+nn = ma.Collection()    # Global collection object
+me = sys.argv[1]        # My side "black" or "white"
 
-#client = gthclient.GthClient(me, "localhost", 0)
-#client = gthclient.GthClient(me, "barton.cs.pdx.edu", 0)
-'''
-side = "black"
 
-board = {letter + digit
-         for letter in letter_range('a')
-         for digit in letter_range('1')}
-
-grid = {"white": set(), "black": set()}
-'''
 # Where the good stuff happens
 # Loop through and play x amount of games to determine how good
 # the ai approach is.
 if __name__ == "__main__":
+    """
+    Main function is where all the good stuff happens,
+    play x amount of games against bart's computer opponent to see
+    how well each approach does. New players can be used via the move variable
+    in the play_game function.
+    """
 
-    wins = 0
-    losses = 0
-    draws = 0
-    total_games = 10    # play 10 games and see how I do
-    i = 0
-    while i < total_games: 
+    wins = 0                # Keep track of my wins
+    losses = 0              # Keep track of my losses
+    draws = 0               # Keep track of draws
+    total_games = 10        # Play x games and see how I do
+    i = 0                   # Just a counter
+
+    while i < total_games:  # Loop for specified amount of games
         i += 1
         try:
-            opp = gthclient.opponent(me)
-            client = gthclient.GthClient(me, "barton.cs.pdx.edu", 0)
+            opp = gthclient.opponent(me)                                # Set opponent
+            client = gthclient.GthClient(me, "barton.cs.pdx.edu", 0)    # Connect to server (Bart's)
+            #client = gthclient.GthClient(me, "localhost", 0)
 
             side = "black"
 
+            # Set up available board spots
             board = {letter + digit
                      for letter in letter_range('a')
                      for digit in letter_range('1')}
 
+            # Set the grid
             grid = {"white": set(), "black": set()}
 
-            win, loss, draw= play_game(side)
-            wins += win
-            losses += loss
-            draws += draw
+            win, loss, draw= play_game(side)        # Check if I won, loss, or tied a game
+            wins += win                             # Increment wins
+            losses += loss                          # Increment losses
+            draws += draw                           # increment draws
 
-            client.closeall()
+            client.closeall()                       # Disconnect from server
+
+            # Print individual game statistics
             print("Game #{} \twins: {}\t\tlosses: {}\tdraws: {}\twin perc: {}\n".format(
                     i, wins, losses, draws, round(float(wins/i), 2) ))
             
-        except (KeyboardInterrupt, SystemExit):
+        except (KeyboardInterrupt, SystemExit):     # Lets me get out if i "ctrl-c"
             raise
         
         except:
-            print("ERROR on {}".format(i))
+            print("ERROR on {}".format(i))      # If error in game, run the same game again.
             i = i-1
             pass
 
