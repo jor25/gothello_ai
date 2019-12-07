@@ -13,7 +13,7 @@ import sys
 import gthclient
 import model_arch as ma
 
-VIEW = True    # Switch this if we don't want to see game details
+VIEW = False    # Switch this if we don't want to see game details
 
 # Bart function for piece generation
 def letter_range(letter):
@@ -209,7 +209,7 @@ grid = {"white": set(), "black": set()}
 if __name__ == "__main__":
 
     wins = 0
-    total_games = 1    # play 10 games and see how I do
+    total_games = 20    # play 10 games and see how I do
     i = 0
     while i < total_games: 
         i += 1

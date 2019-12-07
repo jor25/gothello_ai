@@ -38,11 +38,22 @@ def append_data(data, file_name="state_data/data"):
 
 def convert_labels(labels):
     # Given a value, give me back an index as my label.
+    ''' # Delete in cleanup
+    # THIS IS HOW THE THING IS FOR MY THING!!! (BART'S UPSIDEDOWN)
+    moves = ['a1','b1','c1','d1','e1',
+            'a2','b2','c2','d2','e2',
+            'a3','b3','c3','d3','e3',
+            'a4','b4','c4','d4','e4',
+            'a5','b5','c5','d5','e5']
+    '''
+    # according to bart's data - this is how the field is layed out!!!
+    #'''        
     moves = ['a5','b5','c5','d5','e5',
             'a4','b4','c4','d4','e4',
             'a3','b3','c3','d3','e3',
             'a2','b2','c2','d2','e2',
             'a1','b1','c1','d1','e1']
+    #'''
 
     temp_labels = []
     for lab in labels:
@@ -207,10 +218,12 @@ if __name__== "__main__" :
             if count % 25000 == 0: # New file every 25,000 files 
                 increments += 1     # Go to a new file
 
-            str_datafile = "state_data/data_{}".format(increments)
-            str_labelfile = "state_data/labels_{}".format(increments)
+            #str_datafile = "state_data/data_{}".format(increments)
+            #str_labelfile = "state_data/labels_{}".format(increments)
 
             win, loss = who_won(root)
+            str_datafile = "state_data/{}_data_{}".format(win, increments)
+            str_labelfile = "state_data/{}_labels_{}".format(win, increments)
             
             if STATUS:
                 print (root) 

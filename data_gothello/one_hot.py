@@ -4,7 +4,7 @@ import numpy as np
 # One hot my data:
 # https://stackoverflow.com/questions/29831489/convert-array-of-indices-to-1-hot-encoded-numpy-array
 
-data_file = "state_data/labels_1.csv"
+data_file = "state_data/b_labels_1.csv"
 data = np.loadtxt(data_file, delimiter=",", dtype=int)
 print(data)
 print(len(data))
@@ -21,5 +21,5 @@ b = np.zeros((a.size, a.max()+1))
 b[np.arange(a.size),a] = 1
 '''
 
-file_name = "state_data/hot_labs_1"
+file_name = "state_data/b_hot_labs_1"
 np.savetxt("{}.csv".format(file_name), one_hot, delimiter=",", fmt='%i')
