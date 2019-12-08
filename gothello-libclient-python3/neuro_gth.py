@@ -210,7 +210,7 @@ if __name__ == "__main__":
     wins = 0                # Keep track of my wins
     losses = 0              # Keep track of my losses
     draws = 0               # Keep track of draws
-    total_games = 10        # Play x games and see how I do
+    total_games = 100        # Play x games and see how I do
     i = 0                   # Just a counter
 
     while i < total_games:  # Loop for specified amount of games
