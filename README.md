@@ -17,3 +17,9 @@
 * data_gothello/make_data.py
 * data_gothello/one_hot.py
 
+## Model training files:
+* gothello-libclient-python3/model_arch.py
+* gothello-libclient-python3/trainer.py
+
+## Play against the Bart AI server:
+* gothello-libclient-python3/neuro_gth.py
