@@ -1,5 +1,11 @@
 # Creating a model architecture file
+# This will be what I use to train based off previous winning games.
 
+# Note: change self.network file path for different weights or scratch training.
+
+# References:
+# myself - gen_dino game
+# https://github.com/jor25/Dino_Game/blob/master/collect_states.py
 
 
 import numpy as np
@@ -14,25 +20,22 @@ import sys
 class Collection():
     def __init__(self):
         self.learning_rate = 0.001
-        #self.model = self.network()
-        self.model = self.network("weight_files/nn_3.hdf5")
-
+        #self.model = self.network()                        # No initial weights
+        self.model = self.network("weight_files/nn_3.hdf5") # Using my trained weights
 
     def network(self, weights=None):
-        model = Sequential()
-        model.add(Dense(output_dim=75, activation='relu', input_dim=50))        # max 144
-        #model.add(Dropout(0.15))
+        # Create my model
+        model = Sequential()    
+        model.add(Dense(output_dim=75, activation='relu', input_dim=50))
         model.add(Dense(output_dim=75, activation='relu'))
-        #model.add(Dropout(0.15))
         model.add(Dense(output_dim=75, activation='relu'))
-        #model.add(Dropout(0.15))
-
         model.add(Dense(output_dim=25, activation='softmax'))
         opt = Adam(self.learning_rate)
-        #model.compile(loss='mse', metrics=['accuracy'], optimizer=opt)
-        #model.compile(loss=kl.BinaryCrossentropy(), metrics=['accuracy'], optimizer=opt)
+        
+        # Compile model
         model.compile(loss=kl.categorical_crossentropy, metrics=['accuracy'], optimizer=opt)
 
+        # Load weights if they're available
         if weights:
             model.load_weights(weights)
             print("model loaded")
