@@ -20,6 +20,16 @@ def letter_range(letter):
     for i in range(5):
         yield chr(ord(letter) + i)
 
+def update_grid(rem_from, add_to, piece):
+    """
+    Takes in three strings, a player to remove a piece from(black,white),
+    a player to add a piece to(white,black), and a piece values(a5).
+    """
+    # Call the capture function to verify 
+    grid[rem_from].remove(piece)
+    grid[add_to].add(piece)
+    print(grid)
+
 
 def show_position():
     """
@@ -210,15 +220,15 @@ if __name__ == "__main__":
     wins = 0                # Keep track of my wins
     losses = 0              # Keep track of my losses
     draws = 0               # Keep track of draws
-    total_games = 100        # Play x games and see how I do
+    total_games = 1        # Play x games and see how I do
     i = 0                   # Just a counter
 
     while i < total_games:  # Loop for specified amount of games
         i += 1
         try:
             opp = gthclient.opponent(me)                                # Set opponent
-            client = gthclient.GthClient(me, "barton.cs.pdx.edu", 0)    # Connect to server (Bart's)
-            #client = gthclient.GthClient(me, "localhost", 0)
+            #client = gthclient.GthClient(me, "barton.cs.pdx.edu", 0)    # Connect to server (Bart's)
+            client = gthclient.GthClient(me, "localhost", 0)
 
             side = "black"
 
