@@ -12,8 +12,9 @@ import random
 import sys
 import gthclient
 import model_arch as ma
+import capture as cp
 
-VIEW = False    # Switch this if we don't want to see game details
+VIEW = True#False    # Switch this if we don't want to see game details
 
 # Bart function for piece generation
 def letter_range(letter):
@@ -41,6 +42,10 @@ def show_position():
     Note: The table output in this has been made upsidedown from previous
           implementation. Manually flipped the table in later functions.
     """
+    # Adding in capture function
+    #print("HERE AM I")
+    cp.update_position(grid)
+    print(grid)
     state = []                              # Making a new state for model
     scoring_state = []                      # Custom state for counting score
     for digit in letter_range('1'):

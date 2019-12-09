@@ -23,7 +23,7 @@ board = {letter + digit
          for letter in letter_range('a')
          for digit in letter_range('1')}
 
-grid = {"white": set(), "black": set()}
+#grid = {"white": set(), "black": set()}
 
 # check if a piece is caputred.
 def check_coordinality(lib1, lib2, lib3, lib4):
@@ -35,7 +35,7 @@ def check_coordinality(lib1, lib2, lib3, lib4):
         return False
 
 
-def update_position():
+def update_position(grid):
     for digit in letter_range('1'):
         for letter in letter_range('a'):
             pos = letter + digit
@@ -102,7 +102,7 @@ def update_position():
                     grid["white"].remove(pos)
                     grid["black"].add(pos)
                     print("updated grid is: \n", grid)
-                    show_position()
+                    #show_position()
                 else:
                     #print("result was false \n")
                     #print("for: \n", pos)
@@ -175,7 +175,7 @@ def update_position():
                     grid["black"].remove(pos)
                     grid["white"].add(pos)
                     print("udpated grid is: \n", grid)
-                    show_position()
+                    #show_position()
 
             # piece = "*"
             #else:
@@ -197,6 +197,7 @@ def show_position():
             print(piece, end="")
         print()
 
+'''
 side = "black"
 
 while True:
@@ -226,3 +227,4 @@ while True:
             grid[opp].add(move)
 
     side = gthclient.opponent(side)
+'''
