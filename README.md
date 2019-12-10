@@ -46,3 +46,27 @@ python3 neuro_gth.py black
 	* Go uncomment out the client variable in neuro_gth.py with the barton server. Comment out the client variable with localhost.
     * Then run with `python3 neuro_gth.py black`
 
+## Resources:
+***Initial model architecture example:***
+https://github.com/jor25/Dino_Game/blob/master/collect_states.py
+
+***Stratify example:***
+https://stackoverflow.com/questions/29438265/stratified-train-test-split-in-scikit-learn
+
+***Sklearn train_test_split:***
+https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html
+
+***Bart’s Gothello Project:***
+https://github.com/pdx-cs-ai/gothello-project
+
+***Remove newlines from string:***
+https://stackoverflow.com/questions/16566268/remove-all-line-breaks-from-a-long-string-of-text
+
+***Split string into list:***
+https://www.w3schools.com/python/python_regex.asp
+
+***Replace specific instances:***
+https://stackoverflow.com/questions/19666626/replace-all-elements-of-python-numpy-array-that-are-greater-than-some-value
+
+***One hot my data:***
+https://stackoverflow.com/questions/29831489/convert-array-of-indices-to-1-hot-encoded-numpy-array
