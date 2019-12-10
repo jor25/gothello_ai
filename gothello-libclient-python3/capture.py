@@ -23,7 +23,7 @@ board = {letter + digit
          for letter in letter_range('a')
          for digit in letter_range('1')}
 
-#grid = {"white": set(), "black": set()}
+grid = {"white": set(), "black": set()}
 
 # check if a piece is caputred.
 def check_coordinality(lib1, lib2, lib3, lib4):
@@ -82,12 +82,13 @@ def update_position(grid):
                     else:
                         lib4 = True
 
-                #result = check_coordinality(lib1, lib2, lib3, lib4)
-                if(lib1==False and lib2==False and lib3==False and lib4==False):
-                    result = True
+                result = check_coordinality(lib1, lib2, lib3, lib4)
+                #if(lib1==False and lib2==False and lib3==False and lib4==False):
+                    #result = True
 
-                elif (lib1 == True or lib2==True or lib3==True or lib4==True):
-                    result = False
+                #elif (lib1 == True or lib2==True or lib3==True or lib4==True):
+                    #result = False
+
                 # white piece has been captured.
                 if result == True:
                     print("for: \n", pos)
@@ -102,22 +103,13 @@ def update_position(grid):
                     grid["white"].remove(pos)
                     grid["black"].add(pos)
                     print("updated grid is: \n", grid)
-                    #show_position()
-                else:
-                    #print("result was false \n")
-                    #print("for: \n", pos)
-                    #print("L1 is: \n", lib1)
-                    #print("L2 is: \n", lib2)
-                    #print("L3 is: \n", lib3)
-                    #print("L4 is: \n", lib4)
-                    print("#########################################################################################\n")
-                # piece = "O"
+
             elif pos in grid["black"]:
                 if (letter == 'e'):
                     lib1 = False
                 else:
                     check1 = chr(ord(letter)+1) + digit
-                    print("lib1 is: \n",check1)
+                    #print("lib1 is: \n",check1)
                     if check1 in grid["white"]:
                         lib1 = False
                     else:
@@ -127,7 +119,7 @@ def update_position(grid):
                     lib2 = False
                 else:
                     check2 = letter + chr(ord(digit)+1)
-                    print("lib2 is: \n",check2)
+                    #print("lib2 is: \n",check2)
                     if check2 in grid["white"]:
                         lib2 = False
                     else:
@@ -137,7 +129,7 @@ def update_position(grid):
                     lib3 = False
                 else:
                     check3 = chr(ord(letter)-1) + digit
-                    print("lib3 is: \n",check3)
+                    #print("lib3 is: \n",check3)
                     if check3 in grid["white"]:
                         lib3 = False
                     else:
@@ -148,18 +140,18 @@ def update_position(grid):
                     lib4 = False
                 else:
                     check4 = letter + chr(ord(digit)-1)
-                    print("lib4 is: \n",check4)
+                    #print("lib4 is: \n",check4)
                     if check4 in grid["white"]:
                         lib4 = False
                     else:
                         lib4 = True
 
-                #result = check_coordinality(lib1, lib2, lib3, lib4)
-                if(lib1==False and lib2==False and lib3==False and lib4==False):
-                    result = True
+                result = check_coordinality(lib1, lib2, lib3, lib4)
+                #if(lib1==False and lib2==False and lib3==False and lib4==False):
+                #    result = True
 
-                elif (lib1 == True or lib2==True or lib3==True or lib4==True):
-                    result = False
+                #elif (lib1 == True or lib2==True or lib3==True or lib4==True):
+                #    result = False
 
                 # black piece has been captured.
                 if result == True:
@@ -168,23 +160,16 @@ def update_position(grid):
                     print("L2 is: \n", lib2)
                     print("L3 is: \n", lib3)
                     print("L4 is: \n", lib4)
-                    # piece = "*"
                     # remove piece from black set.
                     # add piece to white set. 
                     print("grid before is: \n", grid)
                     grid["black"].remove(pos)
                     grid["white"].add(pos)
                     print("udpated grid is: \n", grid)
-                    #show_position()
 
-            # piece = "*"
-            #else:
-                #piece = "."
-                #print(piece, end="")
-                #print()
 
 def show_position():
-    update_position()
+    update_position(grid)
     for digit in letter_range('1'):
         for letter in letter_range('a'):
             pos = letter + digit
@@ -197,7 +182,6 @@ def show_position():
             print(piece, end="")
         print()
 
-'''
 side = "black"
 
 while True:
@@ -227,4 +211,3 @@ while True:
             grid[opp].add(move)
 
     side = gthclient.opponent(side)
-'''
