@@ -12,9 +12,10 @@ import random
 import sys
 import gthclient
 import model_arch as ma
-import capture as cp
+#import capture as cp
+#import multi_catch as muc
 
-VIEW = True#False    # Switch this if we don't want to see game details
+VIEW = False    # Switch this if we don't want to see game details
 
 # Bart function for piece generation
 def letter_range(letter):
@@ -43,9 +44,9 @@ def show_position():
           implementation. Manually flipped the table in later functions.
     """
     # Adding in capture function
-    #print("HERE AM I")
-    cp.update_position(grid)
-    print(grid)
+    #cp.update_position(grid)
+    #muc.am_i_free(grid, "black", "white")
+    #print(grid)
     state = []                              # Making a new state for model
     scoring_state = []                      # Custom state for counting score
     for digit in letter_range('1'):
@@ -84,7 +85,7 @@ def show_position():
 def make_predict(restate):
     """
     Function given the 50 element state of 1's and 0's (onehot)
-    uses a neuronetwork prediction to determine a move.
+    uses a neural network prediction to determine a move.
     Then error checks to see if that move is valid to play
     based on the remaining contents of board.
     Later: do a search based on the top 3 predictions (if valid)
@@ -225,15 +226,15 @@ if __name__ == "__main__":
     wins = 0                # Keep track of my wins
     losses = 0              # Keep track of my losses
     draws = 0               # Keep track of draws
-    total_games = 10        # Play x games and see how I do
+    total_games = 100        # Play x games and see how I do
     i = 0                   # Just a counter
 
     while i < total_games:  # Loop for specified amount of games
         i += 1
         try:
             opp = gthclient.opponent(me)                                # Set opponent
-            #client = gthclient.GthClient(me, "barton.cs.pdx.edu", 0)    # Connect to server (Bart's)
-            client = gthclient.GthClient(me, "localhost", 0)
+            client = gthclient.GthClient(me, "barton.cs.pdx.edu", 0)    # Connect to server (Bart's)
+            #client = gthclient.GthClient(me, "localhost", 0)
 
             side = "black"
 
