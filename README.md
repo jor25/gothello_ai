@@ -10,9 +10,22 @@ Before running our program you must first create a virtual environment to work i
 Now you should be able to run our program. 
 
 ## Run game and nnet:
-**Need to add Jordan's Scripts HERE with descriptions on what each do.**
-`python3 neuro_gth.py black`
-
+To run the game locally you will need to run two scripts that are incuded inside the repository. You will also need to open three sepearte terminals and in each one follow the steps listed below in the order in which they appear: 
+##### Terminal #1
+``` 
+cd gothello_ai/gothello-gthd
+$ sh run_local_server.sh 
+```
+##### Terminal #2
+```
+cd gothello_ai/gothello-grossthello
+$ sh run_grossthello.sh 
+```
+##### Terminal #3
+```
+cd gothello_ai/gothello-libclient-python3$
+python3 neuro_gth.py black
+```
 
 ## data preprocessing files:
 **Need to explain what each of the files below does.**
